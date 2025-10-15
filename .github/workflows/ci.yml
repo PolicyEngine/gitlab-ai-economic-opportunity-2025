@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Check markdown files exist
+      run: |
+        test -f README.md
+        test -f CLAUDE.md
+        test -f docs/concept-note/README.md
+        test -f materials/grant-guidelines.md
+
+    - name: Validate markdown syntax
+      uses: actionshub/markdownlint@main
+      continue-on-error: true
+
+    - name: Check for required sections
+      run: |
+        grep -q "Grant Overview" README.md
+        grep -q "Repository Structure" README.md
+        grep -q "Key Dates" README.md
